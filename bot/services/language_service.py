@@ -1,3 +1,4 @@
+import re
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 class language_service:
@@ -14,6 +15,12 @@ class language_service:
 
     def t(self, lang: str, key: str, **kwargs) -> str:
         loc = self._localizations.get(lang, self._localizations[self.DEFAULT_LANG])
-        return loc.format_value(key, kwargs)
+        text = loc.format_value(key, kwargs)
+
+        text = re.sub(r'([_*\[\]()~`>#+\-=|{}.!])', r'\\\1', text)
+
+        text = text.replace("\\n", "\n")
+
+        return text
 
 lng_service = language_service()
